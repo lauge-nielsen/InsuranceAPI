@@ -1,3 +1,4 @@
+using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
 using InsuranceAPI.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,51 +12,60 @@ namespace InsuranceAPI.Controllers
     {
         private readonly InsuranceService _service;
 
-        // Simple in-memory storage for demo purposes
-        private static List<Customer> customers = new();
-
         public InsuranceController(InsuranceService service)
         {
             _service = service;
         }
 
         [HttpGet("price")]
+        [ActionName("GetPrice")]
         public double GetPrice(Customer customer, string insuranceType)
         {
             return _service.CalculatePrice(customer, insuranceType);
         }
 
         [HttpGet("customer")]
+        [ActionName("GetCustomers")]
         public ActionResult<List<Customer>> GetCustomers()
         {
-            return Ok(customers);
+            return Ok(InsuranceService.customers);
+        }
+
+        [HttpGet("policy")]
+        [ActionName("GetPolicies")]
+        public ActionResult<List<Policy>> GetPolicies()
+        {
+            return Ok(InsuranceService.policies);
         }
 
         [HttpPost("customer")]
-        public ActionResult<Customer> CreateCustomer([FromBody] Customer customer) 
+        [ActionName("CreateCustomer")]
+        public ActionResult<Customer> CreateCustomer(CreateCustomerRequest request) 
         {
-            if (customer.Age() < 18)
+            try
             {
-                return BadRequest("Customer must be at least 18 years old");
+                Customer customer = _service.CreateCustomer(request);
+                return Ok(customer);
             }
-
-            customers.Add(customer);
-            return Ok(customer);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("policy")]
-        public ActionResult<InsurancePolicy> CreatePolicy([FromBody] Customer customer, string insuranceType)
+        [ActionName("CreatePolicy")]
+        public ActionResult<Policy> CreatePolicy(CreatePolicyRequest request)
         {
-            var price = _service.CalculatePrice(customer, insuranceType);
-
-            if (insuranceType == "Car" && customer.Age() < 20)
+            try
             {
-                return BadRequest("The customer is too young to purchase a car insurance");
+                Policy policy = _service.CreatePolicy(request);
+                return Ok(policy);
             }
-
-            InsurancePolicy policy = new InsurancePolicy(customer.Id, insuranceType, price);
-
-            return Ok(policy);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

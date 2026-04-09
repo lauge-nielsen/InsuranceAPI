@@ -1,6 +1,6 @@
 namespace InsuranceAPI.Models
 {
-    public class InsurancePolicy
+    public class Policy
     {
         private static int nextPolicyNumber = 1;
 
@@ -9,7 +9,7 @@ namespace InsuranceAPI.Models
         public string InsuranceType { get; set; } 
         public double Price { get; set; }
 
-        public InsurancePolicy(string customerId, string insuranceType, double price)
+        public Policy(string customerId, string insuranceType, double price)
         {
             if (string.IsNullOrWhiteSpace(customerId))
                 throw new ArgumentException("CustomerId required");

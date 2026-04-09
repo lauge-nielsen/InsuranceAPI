@@ -2,11 +2,18 @@
 {
     public class Customer
     {
-        public required string Id { get; set; }
+        public string CustomerId { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         public DateOnly DateOfBirth { get; set; }
+
+        public Customer(string id, string name, DateOnly dateOfBirth)
+        {
+            CustomerId = id;
+            Name = name;
+            DateOfBirth = dateOfBirth;
+        }
 
         public int Age()
         {
