@@ -6,7 +6,6 @@ namespace InsuranceAPI.Models
     {
         public string QuoteId { get; set; } = Guid.NewGuid().ToString();
         public Customer Customer { get; set; } = null!;
-        public string CustomerId { get; set; } = null!;
         public string InsuranceType { get; set; } = null!;
         public double Price { get; set; }
         public DateOnly EffectiveDate { get; set; }
