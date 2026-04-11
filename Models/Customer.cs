@@ -1,4 +1,6 @@
-﻿namespace InsuranceAPI.Models
+﻿using InsuranceAPI.Services;
+
+namespace InsuranceAPI.Models
 {
     public class Customer
     {
@@ -10,6 +12,8 @@
 
         public Customer(string id, string name, DateOnly dateOfBirth)
         {
+            ValidateCustomerData(id, name, dateOfBirth);
+
             CustomerId = id;
             Name = name;
             DateOfBirth = dateOfBirth;
@@ -27,6 +31,18 @@
             }
 
             return age;
+        }
+
+        private static void ValidateCustomerData(string id, string name, DateOnly dateOfBirth)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new ArgumentException("CustomerId required");
+            if (InsuranceService.customers != null && InsuranceService.customers.Any(c => c.CustomerId == id))
+                throw new ArgumentException("CustomerId must be unique");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name required");
+            if (dateOfBirth > DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-18))
+                throw new ArgumentException("Customer must be at least 18 years old");
         }
     }
 }

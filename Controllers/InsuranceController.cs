@@ -8,20 +8,20 @@ namespace InsuranceAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class InsuranceController : ControllerBase
+    public class InsuranceController() : ControllerBase
     {
-        private readonly InsuranceService _service;
-
-        public InsuranceController(InsuranceService service)
-        {
-            _service = service;
-        }
-
         [HttpGet("price")]
         [ActionName("GetPrice")]
-        public double GetPrice(Customer customer, string insuranceType)
+        public ActionResult<double> GetPrice(string customerId, string insuranceType)
         {
-            return _service.CalculatePrice(customer, insuranceType);
+            Customer? customer = InsuranceService.GetCustomerById(customerId);
+
+            if (customer == null) 
+            { 
+                return BadRequest("Customer not found");
+            }
+
+            return Ok(InsuranceService.CalculatePrice(customer, insuranceType));
         }
 
         [HttpGet("customer")]
@@ -29,6 +29,13 @@ namespace InsuranceAPI.Controllers
         public ActionResult<List<Customer>> GetCustomers()
         {
             return Ok(InsuranceService.customers);
+        }
+
+        [HttpGet("quote")]
+        [ActionName("GetQuotes")]
+        public ActionResult<List<Quote>> GetQuotes()
+        {
+            return Ok(InsuranceService.quotes);
         }
 
         [HttpGet("policy")]
@@ -40,12 +47,27 @@ namespace InsuranceAPI.Controllers
 
         [HttpPost("customer")]
         [ActionName("CreateCustomer")]
-        public ActionResult<Customer> CreateCustomer(CreateCustomerRequest request) 
+        public ActionResult<Customer> CreateCustomer(CreateCustomerRequest request)
         {
             try
             {
-                Customer customer = _service.CreateCustomer(request);
+                Customer customer = InsuranceService.CreateCustomer(request);
                 return Ok(customer);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("quote")]
+        [ActionName("CreateQuote")]
+        public ActionResult<Quote> CreateQuote(CreateQuoteRequest request)
+        {
+            try
+            {
+                Quote quote = InsuranceService.CreateQuote(request);
+                return Ok(quote);
             }
             catch (ArgumentException ex)
             {
@@ -59,8 +81,38 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                Policy policy = _service.CreatePolicy(request);
+                Policy policy = InsuranceService.CreatePolicy(request);
                 return Ok(policy);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("quote/{quoteId}")]
+        [ActionName("UpdateQuote")]
+        public ActionResult<Quote> UpdateQuote(string quoteId, UpdateQuoteRequest request)
+        {
+            try
+            {
+                Quote quote = InsuranceService.UpdateQuote(quoteId, request);
+                return Ok(quote);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("quote/{quoteId}")]
+        [ActionName("DeleteQuote")]
+        public ActionResult<Quote> DeleteQuote(string quoteId)
+        {
+            try
+            {
+                InsuranceService.DeleteQuote(quoteId);
+                return NoContent();
             }
             catch (ArgumentException ex)
             {

@@ -1,10 +1,10 @@
 ﻿namespace InsuranceAPI.DTOs.Requests
 {
-    public class CreateCustomerRequest(string customerId, string name, DateOnly dateOfBirth)
+    public class CreateCustomerRequest
     {
-        public string CustomerId { get; set; } = customerId;
-        public string Name { get; set; } = name;
-        public DateOnly DateOfBirth { get; set; } = dateOfBirth;
+        public required string CustomerId { get; set; }
+        public required string Name { get; set; } 
+        public required DateOnly DateOfBirth { get; set; }
 
     }
 }
