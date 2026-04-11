@@ -10,7 +10,7 @@ namespace InsuranceAPI.Controllers
     public class InsuranceController() : ControllerBase
     {
         [HttpGet("price")]
-        public ActionResult<double> GetPrice(string customerId, string insuranceType)
+        public ActionResult<double> GetPrice(string customerId, InsuranceType insuranceType)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                Policy policy = InsuranceService.CreatePolicy(request);
+                Policy? policy = InsuranceService.CreatePolicy(request);
                 return CreatedAtAction(nameof(GetPolicyByNumber), new { policyNumber = policy.PolicyNumber }, policy);
             }
             catch (ArgumentException ex)

@@ -28,13 +28,25 @@ namespace InsuranceAPI.Services
             return quote;
         }
 
-        public static Policy CreatePolicy([FromBody] CreatePolicyRequest request)
+        public static Policy? CreatePolicy([FromBody] CreatePolicyRequest request)
         {
             Quote quote = GetQuoteById(request.QuoteId);
-            Policy policy = new(quote);
-            policies.Add(policy);
 
-            return policy;
+            if (quote.QuoteStatus == QuoteStatus.Quoted)
+            {
+                Policy policy = new(quote);
+                policies.Add(policy);
+                quote.QuoteStatus = QuoteStatus.Issued;
+
+                return policy;
+            }
+
+            else if (quote.QuoteStatus == QuoteStatus.Issued)
+            {
+                throw new ArgumentException("Quote is already issued");
+            }
+
+            return null;
         }
 
         public static Customer GetCustomerById(string customerId)
@@ -77,10 +89,15 @@ namespace InsuranceAPI.Services
         {
             Quote quote = GetQuoteById(quoteId);
 
+            if (quote.QuoteStatus != QuoteStatus.Quoted)
+            {
+                throw new InvalidOperationException("Only quotes with status 'Quoted' can be updated");
+            }
+
             if (request.CustomerId != null)
                 quote.Customer = InsuranceService.GetCustomerById(request.CustomerId);
-            if (!string.IsNullOrWhiteSpace(request.InsuranceType))
-                quote.InsuranceType = request.InsuranceType;
+            if (request.InsuranceType.HasValue)
+                quote.InsuranceType = request.InsuranceType.Value;
             if (request.EffectiveDate.HasValue)
                 quote.EffectiveDate = request.EffectiveDate.Value;
             if (request.ExpirationDate.HasValue)
@@ -88,7 +105,7 @@ namespace InsuranceAPI.Services
             if (request.Price.HasValue)
                 quote.Price = request.Price.Value;
 
-            quote.ValidateQuote();
+            quote.ValidateQuote(); //TODO: Ensure a quote is not updated unless all changes are valid
 
             return quote;
         }
@@ -99,9 +116,9 @@ namespace InsuranceAPI.Services
             quotes.Remove(quote);
         }
 
-        public static double CalculatePrice(Customer customer, string insuranceType)
+        public static double CalculatePrice(Customer customer, InsuranceType insuranceType)
         {
-            double basePrice = insuranceType == "Car" ? 1000 : 500;
+            double basePrice = insuranceType == InsuranceType.Car ? 1000 : 500;
             int age = customer.Age();
 
             if (age < 25)

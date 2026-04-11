@@ -6,7 +6,7 @@ namespace InsuranceAPI.Models
 
         public int PolicyNumber { get; private set; }
         public Customer Customer { get; set; }
-        public string InsuranceType { get; set; } 
+        public InsuranceType InsuranceType { get; set; } 
         public DateTime EffectiveDate { get; set; }
         public DateTime ExpirationDate { get; set; }
         public double Price { get; set; }
@@ -23,15 +23,15 @@ namespace InsuranceAPI.Models
             PolicyNumber = nextPolicyNumber++;
         }
 
-        private static void ValidatePolicyData(Customer customer, string insuranceType, double price)
+        private static void ValidatePolicyData(Customer customer, InsuranceType insuranceType, double price)
         {
             if (string.IsNullOrWhiteSpace(customer.CustomerId))
                 throw new ArgumentException("CustomerId required");
-            if (string.IsNullOrWhiteSpace(insuranceType))
+            if (!Enum.IsDefined(typeof(InsuranceType), insuranceType))
                 throw new ArgumentException("InsuranceType required");
             if (price < 0)
                 throw new ArgumentException("Price cannot be negative");
-            if (insuranceType == "Car" && customer.Age() < 20)
+            if (insuranceType == InsuranceType.Car && customer.Age() < 20)
                 throw new ArgumentException("Customer must be at least 20 years old to purchase a Car insurance");
         }
     }

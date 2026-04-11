@@ -6,13 +6,14 @@ namespace InsuranceAPI.Models
     {
         public string QuoteId { get; set; } = Guid.NewGuid().ToString();
         public Customer Customer { get; set; } = null!;
-        public string InsuranceType { get; set; } = null!;
-        public double Price { get; set; }
+        public InsuranceType InsuranceType { get; set; }
         public DateOnly EffectiveDate { get; set; }
         public DateOnly ExpirationDate { get; set; }
+        public double Price { get; set; }
+        public QuoteStatus QuoteStatus { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Quote(string customerId, string insuranceType, DateOnly effectiveDate)
+        public Quote(string customerId, InsuranceType insuranceType, DateOnly effectiveDate)
         {
             ValidateQuoteParameters(customerId, insuranceType, effectiveDate);
 
@@ -21,14 +22,15 @@ namespace InsuranceAPI.Models
             Price = InsuranceService.CalculatePrice(Customer, InsuranceType);
             EffectiveDate = effectiveDate;
             ExpirationDate = effectiveDate.AddYears(1);
+            QuoteStatus = QuoteStatus.Quoted;
         }
 
-        private static void ValidateQuoteParameters(string customerId, string insuranceType, DateOnly effectiveDate)
+        private static void ValidateQuoteParameters(string customerId, InsuranceType insuranceType, DateOnly effectiveDate)
         {
             if (string.IsNullOrWhiteSpace(customerId))
                 throw new ArgumentException("CustomerId required");
-            if (string.IsNullOrWhiteSpace(insuranceType))
-                throw new ArgumentException("InsuranceType required");
+            if (!Enum.IsDefined(typeof(InsuranceType), insuranceType))
+                throw new ArgumentException("Invalid InsuranceType");
             if (effectiveDate < DateOnly.FromDateTime(DateTime.UtcNow))
                 throw new ArgumentException("EffectiveDate cannot be in the past");
         }
@@ -37,7 +39,7 @@ namespace InsuranceAPI.Models
         {
             if (Customer == null)
                 throw new ArgumentException("Customer required");
-            if (string.IsNullOrWhiteSpace(InsuranceType))
+            if (!Enum.IsDefined(typeof(InsuranceType), InsuranceType))
                 throw new ArgumentException("InsuranceType required");
             if (Price <= 0)
                 throw new ArgumentException("Price must be positive");
