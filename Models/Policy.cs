@@ -27,8 +27,8 @@ namespace InsuranceAPI.Models
         {
             if (string.IsNullOrWhiteSpace(customer.CustomerId))
                 throw new ArgumentException("CustomerId required");
-            if (!Enum.IsDefined(typeof(InsuranceType), insuranceType))
-                throw new ArgumentException("InsuranceType required");
+            if (!Enum.IsDefined(insuranceType))
+                throw new ArgumentException("InsuranceType invalid");
             if (price < 0)
                 throw new ArgumentException("Price cannot be negative");
             if (insuranceType == InsuranceType.Car && customer.Age() < 20)

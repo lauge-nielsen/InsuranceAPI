@@ -12,7 +12,7 @@ namespace InsuranceAPI.Services
         public static List<Quote> quotes = new();
         public static List<Policy> policies = new();
 
-        public static Customer CreateCustomer([FromBody] CreateCustomerRequest request)
+        public static Customer CreateCustomer(CreateCustomerRequest request)
         {
             Customer customer = new(request.CustomerId, request.Name, request.DateOfBirth);
             customers.Add(customer);
@@ -20,17 +20,18 @@ namespace InsuranceAPI.Services
             return customer;
         }
 
-        public static Quote CreateQuote([FromBody] CreateQuoteRequest request)
+        public static Quote CreateQuote(CreateQuoteRequest request)
         {
             Quote quote = new(request.CustomerId, request.InsuranceType, request.EffectiveDate);
+            quote.Validate();
             quotes.Add(quote);
 
             return quote;
         }
 
-        public static Policy? CreatePolicy([FromBody] CreatePolicyRequest request)
+        public static Policy CreatePolicy(CreatePolicyRequest request)
         {
-            Quote quote = GetQuoteById(request.QuoteId);
+            Quote quote = GetQuoteById(request.QuoteId)!;
 
             if (quote.QuoteStatus == QuoteStatus.Quoted)
             {
@@ -41,78 +42,79 @@ namespace InsuranceAPI.Services
                 return policy;
             }
 
-            else if (quote.QuoteStatus == QuoteStatus.Issued)
+            else
             {
-                throw new ArgumentException("Quote is already issued");
+                throw new ArgumentException("QuoteStatus is not 'Quoted'");
             }
 
-            return null;
         }
 
-        public static Customer GetCustomerById(string customerId)
+        public static List<Customer> GetCustomers => customers;
+
+        public static Customer? GetCustomerById(string customerId)
         {
-            Customer? customer = customers.FirstOrDefault(c => c.CustomerId == customerId);
-
-            if (customer == null)
+            if (customerId == null)
             {
-                throw new ArgumentException("Customer not found");
+                return null;
             }
 
-            return customer;
+            return GetCustomers.FirstOrDefault(c => c.CustomerId == customerId);
         }
 
-        public static Quote GetQuoteById(string quoteId)
+        public static Quote? GetQuoteById(string quoteId)
         {
-            Quote? quote = quotes.FirstOrDefault(q => q.QuoteId == quoteId);
 
-            if (quote == null)
+            if (quoteId == null)
             {
-                throw new ArgumentException("Quote not found!");
+                return null;
             }
 
-            return quote;
+            return quotes.FirstOrDefault(q => q.QuoteId == quoteId);
         }
 
-        public static Policy GetPolicyByNumber(int policyNumber)
+        public static Policy? GetPolicyByNumber(int policyNumber)
         {
             Policy? policy = policies.FirstOrDefault(p => p.PolicyNumber == policyNumber);
-
-            if (policy == null)
-            {
-                throw new ArgumentException("Policy not found!");
-            }
-
             return policy;
         }
 
-        public static Quote UpdateQuote(string quoteId, [FromBody] UpdateQuoteRequest request)
+        public static Quote UpdateQuote(string quoteId, UpdateQuoteRequest request)
         {
-            Quote quote = GetQuoteById(quoteId);
+            Quote quote = GetQuoteById(quoteId) ?? throw new ArgumentException("Quote not found");
 
             if (quote.QuoteStatus != QuoteStatus.Quoted)
             {
                 throw new InvalidOperationException("Only quotes with status 'Quoted' can be updated");
             }
 
-            if (request.CustomerId != null)
-                quote.Customer = InsuranceService.GetCustomerById(request.CustomerId);
-            if (request.InsuranceType.HasValue)
-                quote.InsuranceType = request.InsuranceType.Value;
-            if (request.EffectiveDate.HasValue)
-                quote.EffectiveDate = request.EffectiveDate.Value;
-            if (request.ExpirationDate.HasValue)
-                quote.ExpirationDate = request.ExpirationDate.Value;
-            if (request.Price.HasValue)
-                quote.Price = request.Price.Value;
+            Quote proposedQuote = new()
+            {
+                QuoteId = quoteId,
+                Customer = request.CustomerId == null 
+                            ? quote.Customer 
+                            : InsuranceService.GetCustomerById(request.CustomerId) ?? throw new ArgumentException("Customer not found"),
+                InsuranceType = request.InsuranceType ?? quote.InsuranceType,
+                EffectiveDate = request.EffectiveDate ?? quote.EffectiveDate,
+                ExpirationDate = request.ExpirationDate ?? quote.ExpirationDate,
+                Price = quote.Price,
+                QuoteStatus = quote.QuoteStatus,
+            };
 
-            quote.ValidateQuote(); //TODO: Ensure a quote is not updated unless all changes are valid
+            proposedQuote.Validate();
+            proposedQuote.Price = CalculatePrice(proposedQuote.Customer, proposedQuote.InsuranceType);
+
+            quote.Customer = proposedQuote.Customer;
+            quote.InsuranceType = proposedQuote.InsuranceType;
+            quote.EffectiveDate = proposedQuote.EffectiveDate;
+            quote.ExpirationDate = proposedQuote.ExpirationDate;
+            quote.Price = proposedQuote.Price;
 
             return quote;
         }
 
         public static void DeleteQuote(string quoteId)
         {
-            Quote quote = GetQuoteById(quoteId);
+            Quote? quote = GetQuoteById(quoteId) ?? throw new ArgumentException("Quote not found");
             quotes.Remove(quote);
         }
 
@@ -127,9 +129,9 @@ namespace InsuranceAPI.Services
             if (age > 60)
                 basePrice *= 1.2;
 
-            if (basePrice < 0)
+            if (basePrice <= 0)
             {
-                throw new InvalidOperationException("Calculated price cannot be negative");
+                throw new InvalidOperationException("Calculated price cannot be zero or negative");
             }
 
             return basePrice;
