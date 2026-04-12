@@ -13,16 +13,16 @@ namespace InsuranceAPI.Models
         public QuoteStatus QuoteStatus { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Quote(string customerId, InsuranceType insuranceType, DateOnly effectiveDate)
+        public Quote(Customer customer, InsuranceType insuranceType, DateOnly effectiveDate, double price)
         {
-            Customer = InsuranceService.GetCustomerById(customerId);
+            Customer = customer;
             InsuranceType = insuranceType;
             EffectiveDate = effectiveDate;
             ExpirationDate = effectiveDate.AddYears(1);
+            Price = price;
+            QuoteStatus = QuoteStatus.Quoted;
             
             Validate();
-            Price = InsuranceService.CalculatePrice(Customer, InsuranceType);
-            QuoteStatus = QuoteStatus.Quoted;
         }
 
         public Quote()

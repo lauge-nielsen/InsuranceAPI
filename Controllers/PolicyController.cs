@@ -17,9 +17,9 @@ namespace InsuranceAPI.Controllers
         [HttpGet("policy/{policyNumber}")]
         public ActionResult<Policy> GetPolicyByNumber(int policyNumber)
         {
-            Policy? policy = InsuranceService.GetPolicyByNumber(policyNumber);
+            Policy? policy = InsuranceService.FindPolicyByNumber(policyNumber);
 
-            if (policy == null)
+            if (policy is null)
             {
                 return NotFound("Policy not found");
             }

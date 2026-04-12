@@ -22,18 +22,30 @@ namespace InsuranceAPI.Services
 
         public static Quote CreateQuote(CreateQuoteRequest request)
         {
-            Quote quote = new(request.CustomerId, request.InsuranceType, request.EffectiveDate);
-            quote.Validate();
+            ValidateCreateQuoteRequest(request);
+
+            Customer customer = GetCustomerById(request.CustomerId);
+            double price = CalculatePrice(customer, request.InsuranceType);
+            Quote quote = new(customer, request.InsuranceType, request.EffectiveDate, price);
             quotes.Add(quote);
 
             return quote;
         }
 
+        private static void ValidateCreateQuoteRequest(CreateQuoteRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.CustomerId))
+                throw new ArgumentException("CustomerId required");
+
+            if (request.EffectiveDate < DateOnly.FromDateTime(DateTime.UtcNow.Date))
+                throw new ArgumentException("EffectiveDate cannot be in the past");
+        }
+
         public static Policy CreatePolicy(CreatePolicyRequest request)
         {
-            Quote quote = GetQuoteById(request.QuoteId)!;
+            Quote quote = GetQuoteById(request.QuoteId);
 
-            if (quote.QuoteStatus == QuoteStatus.Quoted)
+            if (quote.QuoteStatus is QuoteStatus.Quoted)
             {
                 Policy policy = new(quote);
                 policies.Add(policy);
@@ -44,43 +56,46 @@ namespace InsuranceAPI.Services
 
             else
             {
-                throw new ArgumentException("QuoteStatus is not 'Quoted'");
+                throw new InvalidOperationException("QuoteStatus is not 'Quoted'");
             }
 
         }
 
         public static List<Customer> GetCustomers => customers;
 
-        public static Customer? GetCustomerById(string customerId)
+        public static Customer GetCustomerById(string customerId)
         {
-            if (customerId == null)
-            {
-                return null;
-            }
-
-            return GetCustomers.FirstOrDefault(c => c.CustomerId == customerId);
+            return FindCustomerById(customerId) ?? throw new InvalidOperationException("Customer not found");
         }
 
-        public static Quote? GetQuoteById(string quoteId)
+        public static Customer? FindCustomerById(string customerId)
         {
+            return customers.FirstOrDefault(c => c.CustomerId == customerId);
+        }
 
-            if (quoteId == null)
-            {
-                return null;
-            }
+        public static Quote GetQuoteById(string quoteId)
+        {
+            return FindQuoteById(quoteId) ?? throw new InvalidOperationException("Quote not found");
+        }
 
+        public static Quote? FindQuoteById(string quoteId)
+        {
             return quotes.FirstOrDefault(q => q.QuoteId == quoteId);
         }
 
-        public static Policy? GetPolicyByNumber(int policyNumber)
+        public static Policy GetPolicyByNumber(int policyNumber)
         {
-            Policy? policy = policies.FirstOrDefault(p => p.PolicyNumber == policyNumber);
-            return policy;
+            return FindPolicyByNumber(policyNumber) ?? throw new InvalidOperationException("Policy not found");
+        }
+
+        public static Policy? FindPolicyByNumber(int policyNumber)
+        {
+            return policies.FirstOrDefault(p => p.PolicyNumber == policyNumber);
         }
 
         public static Quote UpdateQuote(string quoteId, UpdateQuoteRequest request)
         {
-            Quote quote = GetQuoteById(quoteId) ?? throw new ArgumentException("Quote not found");
+            Quote quote = GetQuoteById(quoteId);
 
             if (quote.QuoteStatus != QuoteStatus.Quoted)
             {
@@ -92,16 +107,15 @@ namespace InsuranceAPI.Services
                 QuoteId = quoteId,
                 Customer = request.CustomerId == null 
                             ? quote.Customer 
-                            : InsuranceService.GetCustomerById(request.CustomerId) ?? throw new ArgumentException("Customer not found"),
+                            : FindCustomerById(request.CustomerId) ?? throw new InvalidOperationException("Customer not found"),
                 InsuranceType = request.InsuranceType ?? quote.InsuranceType,
                 EffectiveDate = request.EffectiveDate ?? quote.EffectiveDate,
                 ExpirationDate = request.ExpirationDate ?? quote.ExpirationDate,
-                Price = quote.Price,
                 QuoteStatus = quote.QuoteStatus,
             };
 
-            proposedQuote.Validate();
             proposedQuote.Price = CalculatePrice(proposedQuote.Customer, proposedQuote.InsuranceType);
+            proposedQuote.Validate();
 
             quote.Customer = proposedQuote.Customer;
             quote.InsuranceType = proposedQuote.InsuranceType;
@@ -114,7 +128,7 @@ namespace InsuranceAPI.Services
 
         public static void DeleteQuote(string quoteId)
         {
-            Quote? quote = GetQuoteById(quoteId) ?? throw new ArgumentException("Quote not found");
+            Quote quote = GetQuoteById(quoteId);
             quotes.Remove(quote);
         }
 

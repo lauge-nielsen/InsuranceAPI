@@ -17,7 +17,7 @@ namespace InsuranceAPI.Controllers
         [HttpGet("quote/{quoteId}")]
         public ActionResult<Quote> GetQuoteById(string quoteId)
         {
-            Quote? quote = InsuranceService.GetQuoteById(quoteId);
+            Quote? quote = InsuranceService.FindQuoteById(quoteId);
 
             if (quote == null)
             {

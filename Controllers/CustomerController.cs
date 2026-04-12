@@ -18,7 +18,7 @@ namespace InsuranceAPI.Controllers
         [HttpGet("customer/{customerId}")]
         public ActionResult<Customer> GetCustomerById(string customerId)
         {
-            Customer? customer = InsuranceService.GetCustomerById(customerId);
+            Customer? customer = InsuranceService.FindCustomerById(customerId);
 
             if (customer == null)
             {
