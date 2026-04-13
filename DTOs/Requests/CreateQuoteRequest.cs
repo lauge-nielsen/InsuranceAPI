@@ -16,4 +16,5 @@ namespace InsuranceAPI.DTOs.Requests
         [Required]
         public required DateOnly EffectiveDate { get; set; }
     }
+
 }

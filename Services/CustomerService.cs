@@ -1,7 +1,5 @@
 using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceAPI.Services
 {
@@ -12,8 +10,30 @@ namespace InsuranceAPI.Services
 
         public static Customer CreateCustomer(CreateCustomerRequest request)
         {
+            if (customers.Any(c => c.CustomerId == request.CustomerId))
+                throw new ArgumentException("CustomerId must be unique");
+
             Customer customer = new(request.CustomerId, request.Name, request.DateOfBirth);
             customers.Add(customer);
+
+            return customer;
+        }
+
+        public static Customer UpdateCustomer(string customerId, UpdateCustomerRequest request)
+        {
+            Customer customer = GetCustomerById(customerId);
+
+            Customer proposedCustomer = new()
+            {
+                CustomerId = customerId,
+                Name = request.Name ?? customer.Name,
+                DateOfBirth = request.DateOfBirth ?? customer.DateOfBirth
+            };
+
+            proposedCustomer.Validate();
+            
+            customer.Name = proposedCustomer.Name;
+            customer.DateOfBirth = proposedCustomer.DateOfBirth;
 
             return customer;
         }

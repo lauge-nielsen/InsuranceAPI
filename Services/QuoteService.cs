@@ -1,7 +1,5 @@
 using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceAPI.Services
 {
@@ -79,5 +77,7 @@ namespace InsuranceAPI.Services
             if (request.EffectiveDate < DateOnly.FromDateTime(DateTime.UtcNow.Date))
                 throw new ArgumentException("EffectiveDate cannot be in the past");
         }
+
     }
+
 }

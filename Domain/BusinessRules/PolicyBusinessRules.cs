@@ -1,6 +1,12 @@
-﻿namespace InsuranceAPI.Domain.BusinessRules
+﻿using InsuranceAPI.Models;
+
+namespace InsuranceAPI.Domain.BusinessRules
 {
-    public class PolicyBusinessRules
+    public static class PolicyBusinessRules
     {
+        public static void EnforceBusinessRules(Policy policy)
+        {
+            
+        }
     }
 }

@@ -1,7 +1,4 @@
-using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceAPI.Services
 {
@@ -9,7 +6,7 @@ namespace InsuranceAPI.Services
     {
         public static double CalculatePrice(Customer customer, InsuranceType insuranceType)
         {
-            double basePrice = insuranceType == InsuranceType.Car ? 1000 : 500;
+            double basePrice = insuranceType == InsuranceType.Spacecraft ? 1000 : 500;
             int age = customer.Age();
 
             if (age < 25)
@@ -25,5 +22,7 @@ namespace InsuranceAPI.Services
 
             return basePrice;
         }
+
     }
+
 }

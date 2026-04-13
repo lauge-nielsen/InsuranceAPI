@@ -21,6 +21,11 @@ namespace InsuranceAPI.Models
             Validate();
         }
 
+        public Customer()
+        {
+
+        }
+
         public void Validate() 
         { 
             CustomerValidation.Validate(this);

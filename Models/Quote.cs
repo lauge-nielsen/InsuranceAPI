@@ -38,26 +38,5 @@ namespace InsuranceAPI.Models
             QuoteBusinessRules.EnforceBusinessRules(this);
         }
 
-        public void ValidateData()
-        {
-            if (string.IsNullOrWhiteSpace(QuoteId))
-                throw new ArgumentException("QuoteId required");
-
-            if (Customer == null)
-                throw new ArgumentException("Customer required");
-
-            if (EffectiveDate < DateOnly.FromDateTime(DateTime.UtcNow.Date))
-                throw new ArgumentException("EffectiveDate cannot be in the past");
-
-            if (ExpirationDate <= EffectiveDate)
-                throw new ArgumentException("ExpirationDate must be after EffectiveDate");
-            
-        }
-
-        public void ValidateBusinessRules()
-        {
-            if (Customer.Age() < 20 && InsuranceType == InsuranceType.Spacecraft)
-                throw new InvalidOperationException("Customer must be at least 20 years old to purchase a Spacecraft insurance");
-        }
     }
 }

@@ -8,4 +8,5 @@ namespace InsuranceAPI.DTOs.Requests
         [Required]
         public required string QuoteId { get; set; }
     }
+
 }

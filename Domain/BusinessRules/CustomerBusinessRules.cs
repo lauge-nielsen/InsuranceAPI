@@ -9,5 +9,7 @@ namespace InsuranceAPI.Domain.BusinessRules
             if (customer.DateOfBirth > DateOnly.FromDateTime(DateTime.UtcNow).AddYears(-18))
                 throw new ArgumentException("Customer must be at least 18 years old");
         }
+
     }
+
 }

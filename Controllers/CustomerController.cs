@@ -41,5 +41,22 @@ namespace InsuranceAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("customer/{customerId}")]
+        public ActionResult<Customer> UpdateCustomer(string customerId, [FromBody] UpdateCustomerRequest request)
+        {
+            try
+            {
+                Customer customer = CustomerService.UpdateCustomer(customerId, request);
+                return NoContent();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
     }
+
 }

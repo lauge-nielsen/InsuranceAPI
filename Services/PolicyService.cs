@@ -12,13 +12,15 @@ namespace InsuranceAPI.Services
 
         public static Policy CreatePolicy(CreatePolicyRequest request)
         {
+            ValidateCreatePolicyRequest(request);
+
             Quote quote = QuoteService.GetQuoteById(request.QuoteId);
 
             if (quote.QuoteStatus is QuoteStatus.Quoted)
             {
+                quote.Validate();
                 Policy policy = new(quote);
                 policies.Add(policy);
-                quote.QuoteStatus = QuoteStatus.Issued;
 
                 return policy;
             }
@@ -38,6 +40,12 @@ namespace InsuranceAPI.Services
         public static Policy? FindPolicyByNumber(int policyNumber)
         {
             return policies.FirstOrDefault(p => p.PolicyNumber == policyNumber);
+        }
+
+        public static void ValidateCreatePolicyRequest(CreatePolicyRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.QuoteId))
+                throw new ArgumentException("QuoteId required");
         }
     }
 }

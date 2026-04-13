@@ -1,6 +1,24 @@
-﻿namespace InsuranceAPI.Domain.Validation
+﻿using InsuranceAPI.Models;
+using InsuranceAPI.Services;
+using System.Xml.Linq;
+
+namespace InsuranceAPI.Domain.Validation
 {
-    public class CustomerValidation
+    public static class CustomerValidation
     {
+        public static void Validate(Customer customer)
+        {
+            ValidateStructure(customer);
+        }
+
+        public static void ValidateStructure(Customer customer)
+        {
+            if (string.IsNullOrWhiteSpace(customer.CustomerId))
+                throw new ArgumentException("CustomerId required");
+
+            if (string.IsNullOrWhiteSpace(customer.Name))
+                throw new ArgumentException("Name required");
+
+        }
     }
 }

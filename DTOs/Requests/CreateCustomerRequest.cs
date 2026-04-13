@@ -14,4 +14,5 @@ namespace InsuranceAPI.DTOs.Requests
         public required DateOnly DateOfBirth { get; set; }
 
     }
+
 }

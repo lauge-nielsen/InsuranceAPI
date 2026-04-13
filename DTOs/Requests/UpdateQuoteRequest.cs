@@ -15,6 +15,6 @@ namespace InsuranceAPI.DTOs.Requests
 
         public DateOnly? ExpirationDate { get; set; }
 
-
     }
+
 }
