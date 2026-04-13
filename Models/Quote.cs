@@ -1,4 +1,6 @@
-﻿using InsuranceAPI.Services;
+﻿using InsuranceAPI.Domain.BusinessRules;
+using InsuranceAPI.Domain.Validation;
+using InsuranceAPI.Services;
 
 namespace InsuranceAPI.Models
 {
@@ -32,8 +34,8 @@ namespace InsuranceAPI.Models
 
         public void Validate()
         {
-            ValidateData();
-            ValidateBusinessRules();
+            QuoteValidation.ValidateStructure(this);
+            QuoteBusinessRules.EnforceBusinessRules(this);
         }
 
         public void ValidateData()
