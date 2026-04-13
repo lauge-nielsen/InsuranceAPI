@@ -54,8 +54,8 @@ namespace InsuranceAPI.Models
 
         public void ValidateBusinessRules()
         {
-            if (Customer.Age() < 20 && InsuranceType == InsuranceType.Car)
-                throw new InvalidOperationException("Customer must be at least 20 years old to purchase a Car insurance");
+            if (Customer.Age() < 20 && InsuranceType == InsuranceType.Spacecraft)
+                throw new InvalidOperationException("Customer must be at least 20 years old to purchase a Spacecraft insurance");
         }
     }
 }

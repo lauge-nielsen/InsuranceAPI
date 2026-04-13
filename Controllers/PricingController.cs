@@ -11,14 +11,14 @@ namespace InsuranceAPI.Controllers
         [HttpGet("price")]
         public ActionResult<double> GetPrice(string customerId, InsuranceType insuranceType)
         {
-            Customer? customer = InsuranceService.FindCustomerById(customerId);
+            Customer? customer = CustomerService.FindCustomerById(customerId);
 
             if (customer == null)
             {
                 return NotFound("Customer not found");
             }
 
-            return Ok(InsuranceService.CalculatePrice(customer, insuranceType));
+            return Ok(PricingService.CalculatePrice(customer, insuranceType));
         }
     }
 }

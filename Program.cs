@@ -5,7 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddScoped<InsuranceService>();
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<QuoteService>();
+builder.Services.AddScoped<PolicyService>();
+builder.Services.AddScoped<PricingService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

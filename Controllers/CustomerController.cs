@@ -12,13 +12,13 @@ namespace InsuranceAPI.Controllers
         [HttpGet("customer")]
         public ActionResult<List<Customer>> GetCustomers()
         {
-            return Ok(InsuranceService.GetCustomers);
+            return Ok(CustomerService.GetCustomers);
         }
 
         [HttpGet("customer/{customerId}")]
         public ActionResult<Customer> GetCustomerById(string customerId)
         {
-            Customer? customer = InsuranceService.FindCustomerById(customerId);
+            Customer? customer = CustomerService.FindCustomerById(customerId);
 
             if (customer == null)
             {
@@ -33,7 +33,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                Customer customer = InsuranceService.CreateCustomer(request);
+                Customer customer = CustomerService.CreateCustomer(request);
                 return CreatedAtAction(nameof(GetCustomerById), new { customerId = customer.CustomerId }, customer);
             }
             catch (ArgumentException ex)

@@ -6,18 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace InsuranceAPI.Controllers
 {
     [ApiController]
+    [Tags("Quotes")]
     public class QuoteController() : ControllerBase
     {
         [HttpGet("quote")]
         public ActionResult<List<Quote>> GetQuotes()
         {
-            return Ok(InsuranceService.quotes);
+            return Ok(QuoteService.quotes);
         }
 
         [HttpGet("quote/{quoteId}")]
         public ActionResult<Quote> GetQuoteById(string quoteId)
         {
-            Quote? quote = InsuranceService.FindQuoteById(quoteId);
+            Quote? quote = QuoteService.FindQuoteById(quoteId);
 
             if (quote == null)
             {
@@ -32,7 +33,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                Quote quote = InsuranceService.CreateQuote(request);
+                Quote quote = QuoteService.CreateQuote(request);
                 return CreatedAtAction(nameof(GetQuoteById), new { quoteId = quote.QuoteId }, quote);
             }
             catch (ArgumentException ex)
@@ -46,7 +47,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                Quote quote = InsuranceService.UpdateQuote(quoteId, request);
+                Quote quote = QuoteService.UpdateQuote(quoteId, request);
                 return NoContent();
             }
             catch (ArgumentException ex)
@@ -60,7 +61,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                InsuranceService.DeleteQuote(quoteId);
+                QuoteService.DeleteQuote(quoteId);
                 return NoContent();
             }
             catch (ArgumentException ex)

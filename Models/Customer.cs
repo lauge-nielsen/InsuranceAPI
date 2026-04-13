@@ -37,7 +37,7 @@ namespace InsuranceAPI.Models
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("CustomerId required");
-            if (InsuranceService.customers != null && InsuranceService.customers.Any(c => c.CustomerId == id))
+            if (CustomerService.customers != null && CustomerService.customers.Any(c => c.CustomerId == id))
                 throw new ArgumentException("CustomerId must be unique");
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name required");

@@ -11,13 +11,13 @@ namespace InsuranceAPI.Controllers
         [HttpGet("policy")]
         public ActionResult<List<Policy>> GetPolicies()
         {
-            return Ok(InsuranceService.policies);
+            return Ok(PolicyService.policies);
         }
 
         [HttpGet("policy/{policyNumber}")]
         public ActionResult<Policy> GetPolicyByNumber(int policyNumber)
         {
-            Policy? policy = InsuranceService.FindPolicyByNumber(policyNumber);
+            Policy? policy = PolicyService.FindPolicyByNumber(policyNumber);
 
             if (policy is null)
             {
@@ -32,7 +32,7 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                return InsuranceService.CreatePolicy(request);
+                return PolicyService.CreatePolicy(request);
             }
             catch (ArgumentException ex)
             {
