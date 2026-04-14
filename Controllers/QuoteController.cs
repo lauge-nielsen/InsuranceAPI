@@ -48,12 +48,28 @@ namespace InsuranceAPI.Controllers
             try
             {
                 Quote quote = QuoteService.UpdateQuote(quoteId, request);
-                return NoContent();
+                return Ok(quote);
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
+
+        }
+
+        [HttpPut("quote/{quoteId}/accept")]
+        public ActionResult<Quote> AcceptQuote(string quoteId)
+        {
+            try
+            {
+                Quote quote = QuoteService.AcceptQuote(quoteId);
+                return Ok(quote);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [HttpDelete("quote/{quoteId}")]
@@ -68,6 +84,9 @@ namespace InsuranceAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+
         }
+
     }
+
 }

@@ -1,3 +1,4 @@
+using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
 
@@ -59,6 +60,17 @@ namespace InsuranceAPI.Services
             quote.EffectiveDate = proposedQuote.EffectiveDate;
             quote.ExpirationDate = proposedQuote.ExpirationDate;
             quote.Price = proposedQuote.Price;
+
+            return quote;
+        }
+
+        public static Quote AcceptQuote(string quoteId)
+        {
+            Quote quote = GetQuoteById(quoteId);
+            QuoteBusinessRules.ValidateCanBeAccepted(quote);
+            quote.Validate();
+            
+            quote.QuoteStatus = QuoteStatus.Quoted;
 
             return quote;
         }

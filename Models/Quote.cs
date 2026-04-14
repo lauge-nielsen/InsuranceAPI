@@ -1,6 +1,5 @@
 ﻿using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.Domain.Validation;
-using InsuranceAPI.Services;
 
 namespace InsuranceAPI.Models
 {
@@ -12,7 +11,7 @@ namespace InsuranceAPI.Models
         public DateOnly EffectiveDate { get; set; }
         public DateOnly ExpirationDate { get; set; }
         public double Price { get; set; }
-        public QuoteStatus QuoteStatus { get; set; }
+        public QuoteStatus QuoteStatus { get; set; } = QuoteStatus.Draft;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Quote(Customer customer, InsuranceType insuranceType, DateOnly effectiveDate, double price)
@@ -22,7 +21,6 @@ namespace InsuranceAPI.Models
             EffectiveDate = effectiveDate;
             ExpirationDate = effectiveDate.AddYears(1);
             Price = price;
-            QuoteStatus = QuoteStatus.Quoted;
             
             Validate();
         }

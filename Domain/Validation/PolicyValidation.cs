@@ -13,7 +13,6 @@ namespace InsuranceAPI.Domain.Validation
         public static void ValidateStructure(Policy policy)
         {
             
-            
         }
 
     }

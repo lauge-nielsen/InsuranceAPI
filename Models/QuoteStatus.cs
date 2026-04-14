@@ -2,6 +2,7 @@
 {
     public enum QuoteStatus
     {
+        Draft,
         Quoted,
         Issued
     }

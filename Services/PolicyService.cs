@@ -1,7 +1,6 @@
+using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceAPI.Services
 {
@@ -18,6 +17,7 @@ namespace InsuranceAPI.Services
 
             if (quote.QuoteStatus is QuoteStatus.Quoted)
             {
+                QuoteBusinessRules.ValidateCanBeIssued(quote);
                 quote.Validate();
                 Policy policy = new(quote);
                 policies.Add(policy);
@@ -47,5 +47,7 @@ namespace InsuranceAPI.Services
             if (string.IsNullOrWhiteSpace(request.QuoteId))
                 throw new ArgumentException("QuoteId required");
         }
+
     }
+
 }

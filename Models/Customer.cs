@@ -1,6 +1,5 @@
 ﻿using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.Domain.Validation;
-using InsuranceAPI.Services;
 
 namespace InsuranceAPI.Models
 {

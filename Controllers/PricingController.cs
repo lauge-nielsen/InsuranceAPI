@@ -1,4 +1,3 @@
-using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
 using InsuranceAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,5 +19,7 @@ namespace InsuranceAPI.Controllers
 
             return Ok(PricingService.CalculatePrice(customer, insuranceType));
         }
+
     }
+
 }

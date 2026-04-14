@@ -1,5 +1,4 @@
-﻿using InsuranceAPI.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace InsuranceAPI.DTOs.Requests
 {

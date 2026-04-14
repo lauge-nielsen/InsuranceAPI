@@ -5,7 +5,6 @@ namespace InsuranceAPI.Domain.BusinessRules
     public static class QuoteBusinessRules
     {
         public static void EnforceBusinessRules(Quote quote) {
-            ValidateCanBeIssued(quote);
             ValidateCustomerEligibility(quote);
         }
 
@@ -16,6 +15,13 @@ namespace InsuranceAPI.Domain.BusinessRules
             
             if (quote.Customer.Age() > 79 && quote.InsuranceType is InsuranceType.Accident)
                 throw new InvalidOperationException("Customer must be at most 79 years old to purchase an Accident insurance");
+        }
+
+
+        public static void ValidateCanBeAccepted(Quote quote)
+        {
+            if (quote.QuoteStatus is not QuoteStatus.Draft)
+                throw new InvalidOperationException("Quote must be in 'Draft' status to be accepted");
         }
 
         public static void ValidateCanBeIssued(Quote quote)
