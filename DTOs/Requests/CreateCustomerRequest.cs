@@ -13,6 +13,10 @@ namespace InsuranceAPI.DTOs.Requests
         [Required]
         public required DateOnly DateOfBirth { get; set; }
 
+        public string? Occupation { get; set; }
+        public int? YearsOfDrivingExperience { get; set; }
+        public int? NumberOfDrivingfAccidents { get; set; }
+
     }
 
 }

@@ -1,6 +1,7 @@
 using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
+using InsuranceAPI.Services.Factories;
 
 namespace InsuranceAPI.Services
 {
@@ -14,8 +15,8 @@ namespace InsuranceAPI.Services
             ValidateCreateQuoteRequest(request);
 
             Customer customer = CustomerService.GetCustomerById(request.CustomerId);
-            double price = PricingService.CalculatePrice(customer, request.InsuranceType);
-            Quote quote = new(customer, request.InsuranceType, request.EffectiveDate, price);
+            Quote quote = new(customer, request.InsuranceRequest, request.EffectiveDate);
+            quote.Price = PricingService.CalculatePrice(customer, quote.Insurance);
             quotes.Add(quote);
 
             return quote;
@@ -35,9 +36,9 @@ namespace InsuranceAPI.Services
         {
             Quote quote = GetQuoteById(quoteId);
 
-            if (quote.QuoteStatus != QuoteStatus.Quoted)
+            if (quote.QuoteStatus != QuoteStatus.Draft)
             {
-                throw new InvalidOperationException("Only quotes with status 'Quoted' can be updated");
+                throw new InvalidOperationException("Only quotes with status 'Draft' can be updated");
             }
 
             Quote proposedQuote = new()
@@ -46,17 +47,17 @@ namespace InsuranceAPI.Services
                 Customer = request.CustomerId == null 
                             ? quote.Customer 
                             : CustomerService.FindCustomerById(request.CustomerId) ?? throw new InvalidOperationException("Customer not found"),
-                InsuranceType = request.InsuranceType ?? quote.InsuranceType,
+                Insurance = request.InsuranceRequest is not null ? InsuranceFactory.Create(request.InsuranceRequest) : quote.Insurance,
                 EffectiveDate = request.EffectiveDate ?? quote.EffectiveDate,
                 ExpirationDate = request.ExpirationDate ?? quote.ExpirationDate,
                 QuoteStatus = quote.QuoteStatus,
             };
 
-            proposedQuote.Price = PricingService.CalculatePrice(proposedQuote.Customer, proposedQuote.InsuranceType);
+            proposedQuote.Price = PricingService.CalculatePrice(proposedQuote.Customer, proposedQuote.Insurance);
             proposedQuote.Validate();
 
             quote.Customer = proposedQuote.Customer;
-            quote.InsuranceType = proposedQuote.InsuranceType;
+            quote.Insurance = proposedQuote.Insurance;
             quote.EffectiveDate = proposedQuote.EffectiveDate;
             quote.ExpirationDate = proposedQuote.ExpirationDate;
             quote.Price = proposedQuote.Price;

@@ -1,5 +1,8 @@
+using InsuranceAPI.DTOs.Requests;
 using InsuranceAPI.Models;
+using InsuranceAPI.Models.Insurances;
 using InsuranceAPI.Services;
+using InsuranceAPI.Services.Factories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceAPI.Controllers
@@ -8,7 +11,7 @@ namespace InsuranceAPI.Controllers
     public class PricingController() : ControllerBase
     {
         [HttpGet("price")]
-        public ActionResult<double> GetPrice(string customerId, InsuranceType insuranceType)
+        public ActionResult<double> GetPrice(string customerId, InsuranceRequest insuranceRequest)
         {
             Customer? customer = CustomerService.FindCustomerById(customerId);
 
@@ -16,8 +19,8 @@ namespace InsuranceAPI.Controllers
             {
                 return NotFound("Customer not found");
             }
-
-            return Ok(PricingService.CalculatePrice(customer, insuranceType));
+            Insurance? insurance = InsuranceFactory.Create(insuranceRequest);
+            return Ok(PricingService.CalculatePrice(customer, insurance));
         }
 
     }

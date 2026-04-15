@@ -11,6 +11,10 @@ namespace InsuranceAPI.Models
 
         public DateOnly DateOfBirth { get; set; }
 
+        public string? Occupation { get; set; }
+        public int? YearsOfDrivingExperience { get; set; }
+        public int? NumberOfDrivingfAccidents { get; set; }
+
         public Customer(string customerId, string name, DateOnly dateOfBirth)
         {
             CustomerId = customerId;
@@ -25,7 +29,7 @@ namespace InsuranceAPI.Models
 
         }
 
-        public void Validate() 
+        public void Validate()
         { 
             CustomerValidation.Validate(this);
             CustomerBusinessRules.EnforceBusinessRules(this);

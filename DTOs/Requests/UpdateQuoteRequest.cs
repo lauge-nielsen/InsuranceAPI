@@ -7,8 +7,7 @@ namespace InsuranceAPI.DTOs.Requests
     {
         public string? CustomerId { get; set; }
 
-        [EnumDataType(typeof(InsuranceType))]
-        public InsuranceType? InsuranceType { get; set; }
+        public InsuranceRequest? InsuranceRequest { get; set; }
 
         public DateOnly? EffectiveDate { get; set; }
 

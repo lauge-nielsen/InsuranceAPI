@@ -1,5 +1,8 @@
 ﻿using InsuranceAPI.Domain.BusinessRules;
 using InsuranceAPI.Domain.Validation;
+using InsuranceAPI.DTOs.Requests;
+using InsuranceAPI.Models.Insurances;
+using InsuranceAPI.Services.Factories;
 
 namespace InsuranceAPI.Models
 {
@@ -7,21 +10,20 @@ namespace InsuranceAPI.Models
     {
         public string QuoteId { get; set; } = Guid.NewGuid().ToString();
         public Customer Customer { get; set; }
-        public InsuranceType InsuranceType { get; set; }
         public DateOnly EffectiveDate { get; set; }
         public DateOnly ExpirationDate { get; set; }
         public double Price { get; set; }
+        public Insurance Insurance { get; set; }
         public QuoteStatus QuoteStatus { get; set; } = QuoteStatus.Draft;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Quote(Customer customer, InsuranceType insuranceType, DateOnly effectiveDate, double price)
+        public Quote(Customer customer, InsuranceRequest insuranceRequest, DateOnly effectiveDate)
         {
             Customer = customer;
-            InsuranceType = insuranceType;
             EffectiveDate = effectiveDate;
             ExpirationDate = effectiveDate.AddYears(1);
-            Price = price;
-            
+            Insurance = InsuranceFactory.Create(insuranceRequest);
+
             Validate();
         }
 

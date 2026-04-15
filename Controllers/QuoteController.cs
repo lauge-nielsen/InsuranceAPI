@@ -1,4 +1,5 @@
 using InsuranceAPI.DTOs.Requests;
+using InsuranceAPI.DTOs.Responses;
 using InsuranceAPI.Models;
 using InsuranceAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,8 @@ namespace InsuranceAPI.Controllers
             try
             {
                 Quote quote = QuoteService.CreateQuote(request);
-                return CreatedAtAction(nameof(GetQuoteById), new { quoteId = quote.QuoteId }, quote);
+                QuoteResponse response = new(quote);
+                return CreatedAtAction(nameof(GetQuoteById), new { quoteId = quote.QuoteId }, response);
             }
             catch (ArgumentException ex)
             {
@@ -48,7 +50,8 @@ namespace InsuranceAPI.Controllers
             try
             {
                 Quote quote = QuoteService.UpdateQuote(quoteId, request);
-                return Ok(quote);
+                QuoteResponse response = new(quote);
+                return Ok(response);
             }
             catch (ArgumentException ex)
             {
@@ -63,7 +66,8 @@ namespace InsuranceAPI.Controllers
             try
             {
                 Quote quote = QuoteService.AcceptQuote(quoteId);
-                return Ok(quote);
+                QuoteResponse response = new(quote);
+                return Ok(response);
             }
             catch (ArgumentException ex)
             {

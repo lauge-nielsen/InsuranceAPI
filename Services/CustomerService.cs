@@ -13,7 +13,13 @@ namespace InsuranceAPI.Services
             if (customers.Any(c => c.CustomerId == request.CustomerId))
                 throw new ArgumentException("CustomerId must be unique");
 
-            Customer customer = new(request.CustomerId, request.Name, request.DateOfBirth);
+            Customer customer = new(request.CustomerId, request.Name, request.DateOfBirth)
+            {
+                Occupation = request.Occupation,
+                YearsOfDrivingExperience = request.YearsOfDrivingExperience,
+                NumberOfDrivingfAccidents = request.NumberOfDrivingfAccidents
+            };
+
             customers.Add(customer);
 
             return customer;
@@ -27,7 +33,10 @@ namespace InsuranceAPI.Services
             {
                 CustomerId = customerId,
                 Name = request.Name ?? customer.Name,
-                DateOfBirth = request.DateOfBirth ?? customer.DateOfBirth
+                DateOfBirth = request.DateOfBirth ?? customer.DateOfBirth,
+                Occupation = request.Occupation,
+                YearsOfDrivingExperience = request.YearsOfDrivingExperience,
+                NumberOfDrivingfAccidents = request.NumberOfDrivingfAccidents
             };
 
             proposedCustomer.Validate();

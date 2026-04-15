@@ -1,12 +1,13 @@
 using InsuranceAPI.Models;
+using InsuranceAPI.Models.Insurances;
 
 namespace InsuranceAPI.Services
 {
     public class PricingService
     {
-        public static double CalculatePrice(Customer customer, InsuranceType insuranceType)
+        public static double CalculatePrice(Customer customer, Insurance insurance)
         {
-            double basePrice = insuranceType == InsuranceType.Spacecraft ? 1000 : 500;
+            double basePrice = insurance is SpacecraftInsurance ? 1000 : 500;
             int age = customer.Age();
 
             if (age < 25)

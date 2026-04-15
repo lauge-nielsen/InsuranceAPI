@@ -1,4 +1,5 @@
 ﻿using InsuranceAPI.Models;
+using InsuranceAPI.Models.Insurances;
 using System.ComponentModel.DataAnnotations;
 
 namespace InsuranceAPI.DTOs.Requests
@@ -9,11 +10,11 @@ namespace InsuranceAPI.DTOs.Requests
         public required string CustomerId { get; set; }
 
         [Required]
-        [EnumDataType(typeof(InsuranceType))]
-        public required InsuranceType InsuranceType { get; set; }
+        public required DateOnly EffectiveDate { get; set; }
 
         [Required]
-        public required DateOnly EffectiveDate { get; set; }
+        public required InsuranceRequest InsuranceRequest { get; set; }
+
     }
 
 }

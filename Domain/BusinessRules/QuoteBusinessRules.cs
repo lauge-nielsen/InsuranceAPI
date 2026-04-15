@@ -10,10 +10,10 @@ namespace InsuranceAPI.Domain.BusinessRules
 
         public static void ValidateCustomerEligibility(Quote quote)
         {
-            if (quote.Customer.Age() < 20 && quote.InsuranceType is InsuranceType.Spacecraft)
+            if (quote.Customer.Age() < 20 && quote.Insurance.InsuranceType is InsuranceType.Spacecraft)
                 throw new InvalidOperationException("Customer must be at least 20 years old to purchase a Spacecraft insurance");
             
-            if (quote.Customer.Age() > 79 && quote.InsuranceType is InsuranceType.Accident)
+            if (quote.Customer.Age() > 79 && quote.Insurance.InsuranceType is InsuranceType.Accident)
                 throw new InvalidOperationException("Customer must be at most 79 years old to purchase an Accident insurance");
         }
 

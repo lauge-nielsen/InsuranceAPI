@@ -1,7 +1,9 @@
 using InsuranceAPI.DTOs.Requests;
+using InsuranceAPI.DTOs.Responses;
 using InsuranceAPI.Models;
 using InsuranceAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 
 namespace InsuranceAPI.Controllers
 {
@@ -32,7 +34,9 @@ namespace InsuranceAPI.Controllers
         {
             try
             {
-                return PolicyService.CreatePolicy(request);
+                Policy policy = PolicyService.CreatePolicy(request);
+                PolicyResponse response = new(policy);
+                return CreatedAtAction(nameof(GetPolicyByNumber), new { policyNumber = policy.PolicyNumber }, response);
             }
             catch (ArgumentException ex)
             {
