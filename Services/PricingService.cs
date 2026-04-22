@@ -7,21 +7,34 @@ namespace InsuranceAPI.Services
     {
         public static double CalculatePrice(Customer customer, Insurance insurance)
         {
-            double basePrice = insurance is SpacecraftInsurance ? 1000 : 500;
-            int age = customer.Age();
+            double basePrice = CalculateBasePrice(customer, insurance);
+            double finalPrice = insurance.ApplyPricing(customer, basePrice);
 
+            ValidatePrice(finalPrice);
+
+            return finalPrice;
+        }
+
+        public static double CalculateBasePrice(Customer customer, Insurance insurance)
+        {
+            double basePrice = insurance.BasePrice;
+
+            int age = customer.Age();
             if (age < 25)
                 basePrice *= 1.5;
-
             if (age > 60)
                 basePrice *= 1.2;
 
-            if (basePrice <= 0)
+            return basePrice;
+        }
+
+        public static void ValidatePrice(double price)
+        {
+            if (price <= 0)
             {
                 throw new InvalidOperationException("Calculated price cannot be zero or negative");
             }
 
-            return basePrice;
         }
 
     }

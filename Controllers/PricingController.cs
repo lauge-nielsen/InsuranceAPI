@@ -10,7 +10,7 @@ namespace InsuranceAPI.Controllers
     [ApiController]
     public class PricingController() : ControllerBase
     {
-        [HttpGet("price")]
+        [HttpPost("price")]
         public ActionResult<double> GetPrice(string customerId, InsuranceRequest insuranceRequest)
         {
             Customer? customer = CustomerService.FindCustomerById(customerId);
