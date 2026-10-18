@@ -15,6 +15,7 @@ namespace InsuranceAPI.Models.Insurances
 
         public virtual double ApplyPricing(Customer customer, double basePrice)
         {
+            //Overridden in subclasses
             return basePrice;
         }
     }

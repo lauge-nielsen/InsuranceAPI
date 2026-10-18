@@ -15,5 +15,14 @@ namespace InsuranceAPI.DTOs.Requests
         public string? PetSpecies { get; set; } = null;
         public DateOnly? PetDateOfBirth { get; set; } = null;
 
+        // CarInsurance fields
+        public int? CarKilometersDriven { get; set; } = null;
+
+        // TravelInsurance fields
+        public int? TravelDurationDays { get; set; } = null;
+
+        // SpacecraftInsurance fields
+        public int? SpacecraftYearlyFlightHours { get; set; } = null;
+
     }
 }

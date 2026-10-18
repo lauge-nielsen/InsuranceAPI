@@ -18,21 +18,22 @@ namespace InsuranceAPI.Models.Insurances
         {
             double price = basePrice;
 
-            if (KilometersDriven >= 100000)
+            if (KilometersDriven >= 200000)
             {
-                price *= 1.1;
+                price *= 1.20;
             }
+
 
             else if (KilometersDriven >= 150000)
             {
                 price *= 1.15;
             }
 
-            else if (KilometersDriven >= 200000)
+            else if (KilometersDriven >= 100000)
             {
-                price *= 1.20;
+                price *= 1.1;
             }
-
+            
             return price;
         }
 

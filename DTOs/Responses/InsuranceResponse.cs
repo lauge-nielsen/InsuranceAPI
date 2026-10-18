@@ -17,6 +17,15 @@ namespace InsuranceAPI.DTOs.Responses
         public string? PetSpecies { get; set; } = null;
         public DateOnly? PetDateOfBirth { get; set; } = null;
 
+        // CarInsurance fields
+        public int? CarKilometersDriven { get; set; } = null;
+
+        // TravelInsurance fields
+        public int? TravelDurationDays { get; set; } = null;
+
+        // SpacecraftInsurance fields
+        public int? SpacecraftFlightHours { get; set; } = null;
+
         public InsuranceResponse(Insurance insurance)
         {
             InsuranceType = insurance.InsuranceType;
@@ -33,6 +42,21 @@ namespace InsuranceAPI.DTOs.Responses
                 PetSpecies  = ((PetInsurance)insurance).PetSpecies;
                 PetDateOfBirth = ((PetInsurance)insurance).PetDateOfBirth;
             };
+
+            if (insurance is CarInsurance)
+            {
+                CarKilometersDriven = ((CarInsurance)insurance).KilometersDriven;
+            }
+
+            if (insurance is TravelInsurance)
+            {
+                TravelDurationDays = ((TravelInsurance)insurance).DurationDays;
+            }
+
+            if (insurance is SpacecraftInsurance)
+            {
+                SpacecraftFlightHours = ((SpacecraftInsurance)insurance).YearlyFlightHours;
+            }
 
         }
 

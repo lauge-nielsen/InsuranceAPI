@@ -15,11 +15,36 @@ namespace InsuranceAPI.Models.Insurances
 
         public override double ApplyPricing(Customer customer, double basePrice)
         {
-            double price = basePrice;,
+            double price = basePrice;
 
-            if (HouseArea <= 100)
+            if (HouseArea >= 250)
             {
-                price *= 1.3;
+                price *= 1.30;
+            }
+            else if (HouseArea >= 150)
+            {
+                price *= 1.15;
+            }
+            else if (HouseArea >= 80)
+            {
+                price *= 1.05;
+            }
+
+            int? buildingAge = HouseYearBuilt is int yearBuilt
+                ? DateTime.UtcNow.Year - yearBuilt
+                : null;
+
+            if (buildingAge >= 75)
+            {
+                price *= 1.25;
+            }
+            else if (buildingAge >= 45)
+            {
+                price *= 1.15;
+            }
+            else if (buildingAge >= 25)
+            {
+                price *= 1.10;
             }
 
             return price;
